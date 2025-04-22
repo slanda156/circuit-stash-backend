@@ -1,8 +1,9 @@
-.vscode/*
-docs/*
-secrets/*
-tests/*
-tools/*
+.vscode
+docs
+secrets
+tests
+tools
+.git
 .gitattributes
 mkdocs.yml
 pyproject.toml
