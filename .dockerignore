@@ -1,0 +1,11 @@
+.vscode/*
+docs/*
+secrets/*
+tests/*
+tools/*
+.gitattributes
+mkdocs.yml
+pyproject.toml
+TODO
+README.md
+requirements-docs.txt

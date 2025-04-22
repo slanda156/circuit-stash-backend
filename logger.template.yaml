@@ -21,7 +21,7 @@ handlers:
     backupCount: 5
 
 root:
-  level: DEBUG
+  level: ${LOG_LEVEL}
   handlers: [console, rotating]
 
 loggers:

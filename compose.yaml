@@ -1,0 +1,14 @@
+services:
+    backend:
+        image: "circuit-stash-backend:latest"
+        build:
+            context: .
+            tags:
+                - "circuit-stash-backend:latest"
+        volumes:
+            - ./data/logs:/app/logs
+            - ./data:app/config
+        environment:
+            - LOG_LEVEL=DEBUG
+        ports:
+            - "8000:8000"
