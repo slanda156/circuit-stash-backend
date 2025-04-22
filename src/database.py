@@ -1,14 +1,25 @@
-from sqlmodel import Field, SQLModel, create_engine
+from logging import getLogger
 from typing import Optional
 
+from sqlmodel import SQLModel, Field, create_engine
 
-engine = create_engine("mysql+pymysql://bot:pw@127.0.0.1:3306/userdb")
+from src.config import config
 
 
-class User(SQLModel):
+logger = getLogger(__name__)
+
+match config.dbType:
+    case "sqlite":
+        engine = create_engine(f"sqlite:///{config.dbFile}")
+
+    case _:
+        logger.warning(f"Unknown database type: {config.dbType}")
+
+
+class Users(SQLModel):
     id: Optional[int] = Field(default=None, primary_key=True, description="User ID")
     username: str
     password: bytes
     salt: bytes
     disabled: bool
-    level: int
+    type: int

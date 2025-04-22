@@ -9,7 +9,6 @@ from base64 import b64encode, b64decode
 from jose import jwt
 from typing import Annotated
 
-from src.schemes import User
 from src import database as db
 
 
@@ -20,23 +19,23 @@ with open("secrets/private.key", "rb") as f:
     privateKey = rsa.PrivateKey.load_pkcs1(f.read())
 
 
-def getUser(username: str) -> User | None:
+def getUser(username: str) -> db.Users | None:
     with Session(db.engine) as session:
-        stmt = select(db.User)#.where(db.User.username == username)
+        stmt = select(db.Users).where(db.Users.username == username)
         result = session.exec(stmt)
         user = result.first()
     if user is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    return User(**user)
+    return user
 
 
-def checkUser(user: User) -> bool:
-    if not user.disabled:
+def checkUser(user: db.Users) -> bool:
+    if user.type == 0:
         return True
     return False
 
 
-def checkPassword(password: bytes, user: User) -> bool:
+def checkPassword(password: bytes, user: db.Users) -> bool:
     try:
         planePassword = rsa.decrypt(b64decode(password), privateKey)
         hashedPassword = b64encode(pbkdf2_hmac("sha256", planePassword, b64decode(user.salt), 100000))
@@ -54,12 +53,12 @@ def checkPassword(password: bytes, user: User) -> bool:
     return False
 
 
-def generateToken(user: User, usableTime: int = 30) -> str:
+def generateToken(user: db.Users, usableTime: int = 30) -> str:
     usableTime += 60
     data = {
         "sub": user.id,
         "exp": usableTime,
-        "level": user.level
+        "type": user.type
     }
     with open("secrets/secret.txt", "rb") as f:
         secret = b64decode(f.read())
