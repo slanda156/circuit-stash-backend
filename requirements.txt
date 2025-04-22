@@ -1,0 +1,9 @@
+PyYAML
+coloredlogs
+fastapi
+uvicorn
+sqlmodel
+python-jose
+rsa
+PyMySQL
+python-multipart
