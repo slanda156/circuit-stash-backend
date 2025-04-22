@@ -35,15 +35,15 @@ with open("data/config.json", "r") as f:
     logger.info("Config loaded")
 
 secrets = {}
-with open("data/secrets.txt", "rb") as f:
+with open("data/secrets/secret.txt", "rb") as f:
     jwtSecret = b64decode(f.read())
 secrets["jwt"] = jwtSecret
 
-with open("data/private.key", "rb") as f:
+with open("data/secrets/private.key", "rb") as f:
     privateKey = rsa.PrivateKey.load_pkcs1(f.read())
 secrets["privateKey"] = privateKey
 
-with open("data/public.key", "rb") as f:
+with open("data/secrets/public.key", "rb") as f:
     publicKey = rsa.PublicKey.load_pkcs1(f.read())
 secrets["publicKey"] = publicKey
 logger.info("Secrets loaded")
