@@ -35,7 +35,7 @@ with open("data/config.json", "r") as f:
     logger.info("Config loaded")
 
 secrets = {}
-with open("data/secrets.json", "rb") as f:
+with open("data/secrets.txt", "rb") as f:
     jwtSecret = b64decode(f.read())
 secrets["jwt"] = jwtSecret
 
