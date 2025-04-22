@@ -12,6 +12,7 @@ COPY entrypoint.sh /app/entrypoint.sh
 
 RUN chmod ug+x /app/main.py
 RUN chmod -R ug+x /app/src/
+RUN chmod ug+x /app/entrypoint.sh
 RUN apt-get update && apt-get install -y
 
 WORKDIR /app
