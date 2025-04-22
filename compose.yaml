@@ -7,7 +7,7 @@ services:
                 - "circuit-stash-backend:latest"
         volumes:
             - ./data/logs:/app/logs
-            - ./data:app/config
+            - ./data:/app/config
         environment:
             - LOG_LEVEL=DEBUG
         ports:
