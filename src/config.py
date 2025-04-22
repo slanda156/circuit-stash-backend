@@ -46,5 +46,4 @@ secrets["privateKey"] = privateKey
 with open("data/public.key", "rb") as f:
     publicKey = rsa.PublicKey.load_pkcs1(f.read())
 secrets["publicKey"] = publicKey
-
 logger.info("Secrets loaded")
