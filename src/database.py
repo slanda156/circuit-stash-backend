@@ -8,12 +8,19 @@ from src.config import config
 
 logger = getLogger(__name__)
 
+engine = None
 match config.dbType:
     case "sqlite":
         engine = create_engine(f"sqlite:///{config.dbFile}")
 
     case _:
         logger.warning(f"Unknown database type: {config.dbType}")
+
+if engine is not None:
+    SQLModel.metadata.create_all(engine)
+else:
+    logger.critical("No engine available, exiting")
+    exit(1)
 
 
 class Users(SQLModel):
