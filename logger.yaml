@@ -16,7 +16,7 @@ handlers:
   rotating:
     class: logging.handlers.RotatingFileHandler
     formatter: complex
-    filename: "logs/log.log"
+    filename: "data/logs/log.log"
     maxBytes: 1048576
     backupCount: 5
 

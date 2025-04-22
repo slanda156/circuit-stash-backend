@@ -20,10 +20,9 @@ class Config(BaseModel):
     dbPassword: Optional[str] = Field(default=None)
 
 
-configPath = Path("config/config.json")
+configPath = Path("data/config.json")
 if not configPath.exists():
     logger.warning("Config file not found. Creating default config.")
-    configPath.parent.mkdir(parents=True, exist_ok=True)
     with open(configPath, "w") as f:
         config = Config()
         f.write(config.model_dump_json(indent=4))

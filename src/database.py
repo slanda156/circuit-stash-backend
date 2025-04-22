@@ -11,7 +11,7 @@ logger = getLogger(__name__)
 engine = None
 match config.dbType:
     case "sqlite":
-        engine = create_engine(f"sqlite:///{config.dbFile}")
+        engine = create_engine(f"sqlite:///data/{config.dbFile}")
 
     case _:
         logger.warning(f"Unknown database type: {config.dbType}")
