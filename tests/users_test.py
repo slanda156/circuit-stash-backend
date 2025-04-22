@@ -4,12 +4,12 @@ from base64 import b64encode
 from fastapi.testclient import TestClient
 
 from main import app
+from src.config import secrets
 
 client = TestClient(app)
 logger = logging.getLogger("logger")
 
-with open("secrets/public.key", "rb") as f:
-    publicKey = rsa.PublicKey.load_pkcs1(f.read())
+publicKey = secrets.get("publicKey", "")
 
 
 def testUserCreate():

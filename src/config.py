@@ -2,6 +2,8 @@ from logging import getLogger
 from pathlib import Path
 from typing import Optional
 
+import rsa
+from base64 import b64decode
 from pydantic import BaseModel, Field
 
 logger = getLogger(__name__)
@@ -31,3 +33,16 @@ if not configPath.exists():
 with open("data/config.json", "r") as f:
     config = Config.model_validate_json(f.read())
     logger.info("Config loaded")
+
+secrets = {}
+with open("data/secrets.json", "rb") as f:
+    jwtSecret = b64decode(f.read())
+secrets["jwt"] = jwtSecret
+
+with open("data/private.key", "rb") as f:
+    privateKey = rsa.PrivateKey.load_pkcs1(f.read())
+secrets["privateKey"] = privateKey
+
+with open("data/public.key", "rb") as f:
+    publicKey = rsa.PublicKey.load_pkcs1(f.read())
+secrets["publicKey"] = publicKey
