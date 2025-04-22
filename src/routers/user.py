@@ -10,13 +10,11 @@ from jose import jwt
 from typing import Annotated
 
 from src import database as db
+from src.config import secrets
 
 
 logger = getLogger(__name__)
 router = APIRouter()
-
-with open("secrets/private.key", "rb") as f:
-    privateKey = rsa.PrivateKey.load_pkcs1(f.read())
 
 
 def getUser(username: str) -> db.Users | None:
@@ -37,7 +35,7 @@ def checkUser(user: db.Users) -> bool:
 
 def checkPassword(password: bytes, user: db.Users) -> bool:
     try:
-        planePassword = rsa.decrypt(b64decode(password), privateKey)
+        planePassword = rsa.decrypt(b64decode(password), secrets.get("privateKey", ""))
         hashedPassword = b64encode(pbkdf2_hmac("sha256", planePassword, b64decode(user.salt), 100000))
 
     except rsa.DecryptionError:
@@ -60,9 +58,7 @@ def generateToken(user: db.Users, usableTime: int = 30) -> str:
         "exp": usableTime,
         "type": user.type
     }
-    with open("secrets/secret.txt", "rb") as f:
-        secret = b64decode(f.read())
-    encoded_jwt = jwt.encode(data, secret)
+    encoded_jwt = jwt.encode(data, secrets.get("jwt", ""))
     return encoded_jwt
 
 
