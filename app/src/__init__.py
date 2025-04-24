@@ -4,8 +4,6 @@ import logging
 import logging.handlers
 import logging.config
 from pathlib import Path
-# Import third-party modules
-from coloredlogs import install
 
 # Configer Logging
 with open("logger.yaml") as f:
@@ -20,8 +18,6 @@ with open("logger.yaml") as f:
     logFormat = loggerConfig.get("formatters", {}).get("simple", {}).get("format", None)
     logDatefmt = loggerConfig.get("formatters", {}).get("simple", {}).get("datefmt", None)
     logLevel = loggerConfig.get("root", {}).get("level", 0)
-    # Make logging colerfull in the terminal
-    install(level=logLevel, fmt=logFormat, datefmt=logDatefmt)
 
 # Get logger
 logger = logging.getLogger(__name__)

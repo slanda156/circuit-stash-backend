@@ -1,9 +1,5 @@
 PyYAML
-coloredlogs
-fastapi
-uvicorn
+fastapi[standard]
+pyjwt
+passlib[bcrypt]
 sqlmodel
-python-jose
-rsa
-PyMySQL
-python-multipart

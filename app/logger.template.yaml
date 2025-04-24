@@ -27,5 +27,14 @@ root:
 loggers:
   httpcore:
     level: INFO
+    handlers: [console, rotating]
+
+  sqlalchemy.engine:
+    level: WARNING
+    handlers: [console, rotating]
+
+  python_multipart:
+    level: WARNING
+    handlers: [console, rotating]
 
 disable_existing_loggers: false
