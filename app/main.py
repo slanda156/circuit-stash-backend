@@ -15,7 +15,10 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title="Circuit Stash API",
     description="API for Circuit Stash",
-    version=VERSION
+    version=VERSION,
+    swagger_ui_parameters={
+        "syntaxHighlight.theme": "monokai"
+    }
 )
 # Include the routers
 app.include_router(
