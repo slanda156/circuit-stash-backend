@@ -33,21 +33,21 @@ def getImages() -> dict:
     return images
 
 
-@router.get("/{imageId}")
-def getImage(imageId: int) -> FileResponse:
+@router.get("/{imageName}")
+def getImage(imageName: str) -> FileResponse:
     with Session(db.engine) as session:
-        stmt = select(db.Images).where(db.Images.id == imageId)
+        stmt = select(db.Images).where(db.Images.name == imageName)
         result = session.exec(stmt).first()
     if not result:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No image was found with the id: {imageId}",
+            detail=f"No image was found with the name: {imageName}",
             headers={"WWW-Authenticate": "Bearer"}
         )
     if len(result.path) <= 1:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No image was found with the id: {imageId}",
+            detail=f"No image was found with the name: {imageName}",
             headers={"WWW-Authenticate": "Bearer"}
         )
     path = Path(result.path)

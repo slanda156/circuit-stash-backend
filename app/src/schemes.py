@@ -1,3 +1,5 @@
+import uuid
+
 from pydantic import BaseModel
 
 
@@ -26,3 +28,26 @@ class TokenData(BaseModel):
     username: str
     type: int
     expiration: float
+
+
+class Part(BaseModel):
+    """
+    Part model for the application.
+    """
+    id: uuid.UUID | None = None
+    name: str
+    description: str | None = None
+    minStock: int | None = None
+    image: str | None = None
+    datasheet: str | None = None
+
+
+class Location(BaseModel):
+    """
+    Location model for the application.
+    """
+    id: uuid.UUID | None = None
+    name: str
+    description: str | None = None
+    image: str | None = None
+    parent: uuid.UUID | None = None

@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 import src.database as db
-from src.dependencies import secrets, JWTALGORITHM, JWTEXPIRATION, FAILEDAUTHENTICATION, getCurrentUser, pwdContex
+from src.dependencies import secrets, JWTALGORITHM, JWTEXPIRATION, FAILEDAUTHENTICATION, getCurrentUser, PWDCONTEXT
 from src.schemes import Token, TokenData, User
 
 
@@ -16,7 +16,7 @@ router = APIRouter()
 
 
 def verifyPassword(hashedPassword: str, plainPassword: str, salt: str) -> bool:
-    return pwdContex.verify(plainPassword + salt, hashedPassword)
+    return PWDCONTEXT.verify(plainPassword + salt, hashedPassword)
 
 
 def authenticateUser(username: str, password: str) -> User:

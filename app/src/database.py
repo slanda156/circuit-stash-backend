@@ -1,4 +1,5 @@
 import os
+import uuid
 from logging import getLogger
 from typing import Optional
 from base64 import b64encode
@@ -15,7 +16,7 @@ logger = getLogger(__name__)
 
 
 class Users(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     username: str
     password: str
     salt: str
@@ -24,38 +25,38 @@ class Users(SQLModel, table=True):
 
 
 class Locations(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str
     description: str = ""
-    image: str = ""
+    image: Optional[uuid.UUID] = Field(default=None, foreign_key="images.id")
     parent : Optional[int] = Field(default=None)
 
 
 class Parts(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str
     description: str = ""
     stock: int = 0
     minStock: int = 0
-    image: str = ""
-    datasheet: str = ""
+    image: Optional[uuid.UUID] = Field(default=None, foreign_key="images.id")
+    datasheet: Optional[uuid.UUID] = Field(default=None, foreign_key="datasheets.id")
 
 
 class Inventory(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    partId: int = Field(foreign_key="parts.id")
-    locationId: int = Field(foreign_key="locations.id")
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    partId: Optional[uuid.UUID] = Field(foreign_key="parts.id")
+    locationId: Optional[uuid.UUID] = Field(foreign_key="locations.id")
     stock: int = 0
 
 
 class Images(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str
     path: str
 
 
 class Datasheets(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     name: str
     path: str
 
