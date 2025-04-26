@@ -152,7 +152,7 @@ def validateUUID(id: str | uuid.UUID) -> uuid.UUID:
             headers={"WWW-Authenticate": "Bearer"}
         )
     try:
-        uuid.UUID(id, version=4)
+        uuid.UUID(str(id), version=4)
     except ValueError:
         logger.debug(f"Invalid UUID: \"{id}\"")
         raise HTTPException(
@@ -160,7 +160,7 @@ def validateUUID(id: str | uuid.UUID) -> uuid.UUID:
             detail="UUID is invalid",
             headers={"WWW-Authenticate": "Bearer"}
         )
-    return id
+    return uuid.UUID(str(id), version=4)
 
 
 def validatePart(part: Part) -> Part:
