@@ -52,4 +52,5 @@ def getLocationByName(user: Annotated[User, Depends(getCurrentUser)], locationNa
 
 
 @router.post("/")
-def addLocation(, user: Annotated[User, Depends(getCurrentUser)]) -> None:
+def addLocation(user: Annotated[User, Depends(getCurrentUser)]) -> None:
+    pass
