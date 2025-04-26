@@ -100,8 +100,8 @@ if engine is not None:
     with Session(engine) as session:
         stmt = select(Users).where(Users.username == "admin")
         result = session.exec(stmt)
-        user = result.first()
-        if user is None:
+        user = result.all()
+        if len(user) == 0:
             logger.warning("Admin user not found, creating default admin user")
             salt = b64encode(os.urandom(16)).decode()
             hashedPassword = getPasswordHash("admin", salt)
