@@ -54,4 +54,4 @@ def getDatasheet(datasheetName: str) -> FileResponse:
         logger.warning(f"Datasheet not found: {path}")
         # Send default missing png
         path = Path.cwd() / "assets" / "images" / "file-x.svg"
-    return FileResponse(path, media_type=path.suffix[1:], filename=path.name)
+    return FileResponse(path, media_type="application/pdf", filename=path.name, headers={"Content-Disposition": f"inline; filename={path.name}"})
