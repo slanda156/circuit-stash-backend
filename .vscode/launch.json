@@ -8,7 +8,8 @@
             "name": "Main File",
             "type": "debugpy",
             "request": "launch",
-            "program": "${cwd}/main.py",
+            "program": "${cwd}/app/main.py",
+            "cwd": "${workspaceFolder}/app",
             "console": "integratedTerminal",
             "justMyCode": true
         },
@@ -16,7 +17,8 @@
             "name": "Main File & modules",
             "type": "debugpy",
             "request": "launch",
-            "program": "${cwd}/main.py",
+            "program": "${cwd}/app/main.py",
+            "cwd": "${workspaceFolder}/app",
             "console": "integratedTerminal",
             "justMyCode": false
         }

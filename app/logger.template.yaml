@@ -8,14 +8,23 @@ formatters:
   complex:
     format: "%(asctime)s |%(levelname)8s|%(lineno)4d:%(name)s - %(message)s"
 
+filters:
+    filter:
+      (): src.loggingFilters.RedactingFilter
+      sensitiveFields:
+        - password
+        - token
+
 handlers:
   console:
     class: logging.StreamHandler
     formatter: simple
+    filters: [filter]
 
   rotating:
     class: logging.handlers.RotatingFileHandler
     formatter: complex
+    filters: [filter]
     filename: "data/logs/log.log"
     maxBytes: 1048576
     backupCount: 5
@@ -35,6 +44,10 @@ loggers:
 
   python_multipart:
     level: WARNING
+    handlers: [console, rotating]
+
+  passlib.handlers.bcrypt:
+    level: ERROR
     handlers: [console, rotating]
 
 disable_existing_loggers: false
