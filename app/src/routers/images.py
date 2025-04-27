@@ -91,7 +91,7 @@ def getImage(imageId: str) -> FileResponse:
             detail=f"No image was found with the id: {imageUUID}",
             headers={"WWW-Authenticate": "Bearer"}
         )
-    path = Path(result.path)
+    path = Path.cwd() / result.path
     if not path.exists():
         logger.warning(f"Image not found: {path}")
         # Send default missing png

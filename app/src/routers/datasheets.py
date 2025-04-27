@@ -90,7 +90,7 @@ def getDatasheet(datasheetId: str) -> FileResponse:
             detail=f"No datasheet was found with the id: {datasheetUUID}",
             headers={"WWW-Authenticate": "Bearer"}
         )
-    path = Path(result.path)
+    path = Path.cwd() / result.path
     if not path.exists():
         logger.warning(f"Datasheet not found: {path}")
         raise HTTPException(
