@@ -55,6 +55,9 @@ app.include_router(
 # Define the main function
 def main() -> None:
     logger.info(f"Starting the circuit stash backend {VERSION}")
+    logger.info(f"Loaded {len(app.routes)} routes")
+    for route in app.routes:
+        logger.debug(f"Route: \"{route.path}\" - Methods: {route.methods}") # type: ignore
     uvicorn.run(
         "main:app",
         host="0.0.0.0",
