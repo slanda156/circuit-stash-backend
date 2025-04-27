@@ -8,7 +8,6 @@ from fastapi.responses import FileResponse
 from sqlmodel import Session, select
 
 import src.database as db
-from src.schemes import Datasheet
 
 
 logger = getLogger(__name__)
