@@ -1,9 +1,10 @@
 import uuid
+import os
 from logging import getLogger
 from pathlib import Path
 from typing import Optional, Annotated
 from datetime import datetime, timedelta
-from base64 import b64decode
+from base64 import b64decode, b64encode
 
 import jwt
 from jwt.exceptions import InvalidTokenError
@@ -145,7 +146,7 @@ def validateUUID(id: str | uuid.UUID) -> uuid.UUID:
             headers={"WWW-Authenticate": "Bearer"}
         )
     if type(id) not in [str, uuid.UUID]:
-        logger.debug(f"Invalid type: \"{type(id)}\"")
+        logger.debug(f"Invalid type: {type(id)}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="UUID must be string",
@@ -154,7 +155,7 @@ def validateUUID(id: str | uuid.UUID) -> uuid.UUID:
     try:
         uuid.UUID(str(id), version=4)
     except ValueError:
-        logger.debug(f"Invalid UUID: \"{id}\"")
+        logger.debug(f"Invalid UUID: {id}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="UUID is invalid",
@@ -222,6 +223,13 @@ with open("data/config.json", "r") as f:
     config = Config.model_validate_json(f.read())
     logger.info("Config loaded")
 
+secretsPath = Path("data/secrets")
+if not secretsPath.exists():
+    logger.warning("Secrets folder not found. Creating default folder.")
+    secretsPath.mkdir(parents=True, exist_ok=True)
+    with open(secretsPath / "jwt.txt", "wb") as f:
+        f.write(b64encode(os.urandom(32)))
+        logger.info("New jwt secret created")
 secrets = {}
 with open("data/secrets/jwt.txt", "rb") as f:
     jwtSecret = b64decode(f.read())
