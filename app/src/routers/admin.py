@@ -82,13 +82,13 @@ def reloadImages(user: Annotated[User, Depends(isAdmin)]) -> None:
         images = result.all()
         for image in images:
             session.delete(image)
-        imagePath = Path.cwd() / "data" / "images"
+        imagePath = Path("data/images")
         imageExtensions = ["png", "jpg", "jpeg"]
         images = []
         for extension in imageExtensions:
             images.extend(imagePath.glob(f"*.{extension}"))
         for image in images:
-            newImage = db.Images(name=image.stem, path=str(imagePath / image.name))
+            newImage = db.Images(path=str(imagePath / image.name))
             session.add(newImage)
         logger.info(f"Added {len(images)} images")
         session.commit()
@@ -103,10 +103,10 @@ def reloadDatasheets(user: Annotated[User, Depends(isAdmin)]) -> None:
         datasheets = result.all()
         for datasheet in datasheets:
             session.delete(datasheet)
-        datasheetPath = Path.cwd() / "data" / "datasheets"
+        datasheetPath = Path("data/datasheets")
         datasheets = list(datasheetPath.glob("*.pdf"))
         for datasheet in datasheets:
-            newDatasheet = db.Datasheets(name=datasheet.stem, path=str(datasheetPath / datasheet.name))
+            newDatasheet = db.Datasheets(path=str(datasheetPath / datasheet.name))
             session.add(newDatasheet)
         logger.info(f"Added {len(datasheets)} datasheets")
         session.commit()
