@@ -76,7 +76,7 @@ def addPart(part: Annotated[Part, Depends(validatePart)], user: Annotated[User, 
     with Session(db.engine) as session:
         imageId = None
         if part.image is not None:
-            stmt = select(db.Images).where(db.Images.name == part.image)
+            stmt = select(db.Images).where(db.Images.id == part.image)
             result = session.exec(stmt)
             existingImage = result.first()
             if not existingImage:
@@ -89,7 +89,7 @@ def addPart(part: Annotated[Part, Depends(validatePart)], user: Annotated[User, 
                 imageId = existingImage.id
         datasheetId = None
         if part.datasheet is not None:
-            stmt = select(db.Datasheets).where(db.Datasheets.name == part.datasheet)
+            stmt = select(db.Datasheets).where(db.Datasheets.id == part.datasheet)
             result = session.exec(stmt)
             existingDatasheet = result.first()
             if not existingDatasheet:

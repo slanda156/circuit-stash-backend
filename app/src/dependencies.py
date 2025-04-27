@@ -188,9 +188,9 @@ def validatePart(part: Part) -> Part:
                 headers={"WWW-Authenticate": "Bearer"}
             )
     if part.image is not None:
-        validatePath(part.image)
+        validateUUID(part.image)
     if part.datasheet is not None:
-        validatePath(part.datasheet)
+        validateUUID(part.datasheet)
     return part
 
 
@@ -205,7 +205,7 @@ def validateLocation(location: Location) -> Location:
     if location.description is not None:
         validateString(location.description)
     if location.image is not None:
-        validatePath(location.image)
+        validateUUID(location.image)
     if location.parent is not None:
         validateUUID(location.parent)
     return location
@@ -236,3 +236,8 @@ with open("data/secrets/jwt.txt", "rb") as f:
 secrets["jwt"] = jwtSecret
 
 logger.info("Secrets loaded")
+
+datasheetPath = Path("data/datasheets")
+datasheetPath.mkdir(parents=True, exist_ok=True)
+imagePath = Path("data/images")
+imagePath.mkdir(parents=True, exist_ok=True)

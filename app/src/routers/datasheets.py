@@ -1,11 +1,14 @@
+import uuid
+import shutil
 from logging import getLogger
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, UploadFile, File
 from fastapi.responses import FileResponse
 from sqlmodel import Session, select
 
 import src.database as db
+from src.schemes import Datasheet
 
 
 logger = getLogger(__name__)
@@ -26,32 +29,74 @@ def getDatasheets() -> dict:
             path = "/".join(pathParts)
             logger.debug(f"Datasheet path: {path}")
             datasheets[datasheet.id] = {
-                "name": datasheet.name,
                 "path": path
             }
     return datasheets
 
 
-@router.get("/{datasheetName}")
-def getDatasheet(datasheetName: str) -> FileResponse:
+@router.post("/")
+def addDatasheet(datasheet: UploadFile = File(...)) -> dict:
+    if not datasheet:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Datasheet file is required",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    filename = datasheet.filename
+    if filename:
+        if not filename.endswith(".pdf"):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Datasheet file must be a PDF",
+                headers={"WWW-Authenticate": "Bearer"}
+            )
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Datasheet file is required",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    path = Path("data/datasheets") / filename
+    if path.exists():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Datasheet file already exists",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    with open(path, "wb") as f:
+        shutil.copyfileobj(datasheet.file, f)
     with Session(db.engine) as session:
-        stmt = select(db.Datasheets).where(db.Datasheets.name == datasheetName)
+        dbDatasheet = db.Datasheets(path=str(path))
+        session.add(dbDatasheet)
+        session.commit()
+        session.refresh(dbDatasheet)
+    return {"id": str(dbDatasheet.id)}
+
+
+@router.get("/{datasheetId}")
+def getDatasheet(datasheetId: str) -> FileResponse:
+    datasheetUUID = uuid.UUID(str(datasheetId), version=4)
+    with Session(db.engine) as session:
+        stmt = select(db.Datasheets).where(db.Datasheets.id == datasheetUUID)
         result = session.exec(stmt).first()
     if not result:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No datasheet was found with the name: {datasheetName}",
+            detail=f"No datasheet was found with the id: {datasheetUUID}",
             headers={"WWW-Authenticate": "Bearer"}
         )
     if len(result.path) <= 1:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"No datasheet was found with the name: {datasheetName}",
+            detail=f"No datasheet was found with the id: {datasheetUUID}",
             headers={"WWW-Authenticate": "Bearer"}
         )
     path = Path(result.path)
     if not path.exists():
         logger.warning(f"Datasheet not found: {path}")
-        # Send default missing png
-        path = Path.cwd() / "assets" / "images" / "file-x.svg"
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No datasheet was found with the id: {datasheetUUID}",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
     return FileResponse(path, media_type="application/pdf", filename=path.name, headers={"Content-Disposition": f"inline; filename={path.name}"})

@@ -38,8 +38,8 @@ class Part(BaseModel):
     name: str
     description: str | None = None
     minStock: int | None = None
-    image: str | None = None
-    datasheet: str | None = None
+    image: uuid.UUID | None = None
+    datasheet: uuid.UUID | None = None
 
 
 class Location(BaseModel):
@@ -49,5 +49,21 @@ class Location(BaseModel):
     id: uuid.UUID | None = None
     name: str
     description: str | None = None
-    image: str | None = None
+    image: uuid.UUID | None = None
     parent: uuid.UUID | None = None
+
+
+class Image(BaseModel):
+    """
+    Image model for the application.
+    """
+    id: uuid.UUID | None = None
+    path: str
+
+
+class Datasheet(BaseModel):
+    """
+    Datasheet model for the application.
+    """
+    id: uuid.UUID | None = None
+    path: str | None = None

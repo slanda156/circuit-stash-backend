@@ -51,13 +51,11 @@ class Inventory(SQLModel, table=True):
 
 class Images(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    name: str
     path: str
 
 
 class Datasheets(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    name: str
     path: str
 
 
