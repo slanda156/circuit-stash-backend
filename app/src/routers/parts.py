@@ -73,6 +73,12 @@ def addPart(part: Annotated[Part, Depends(validatePart)], user: Annotated[User, 
             detail="Part minStock is required and must be positive",
             headers={"WWW-Authenticate": "Bearer"}
         )
+    if part.name is None or part.name == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Part name is required",
+            headers={"WWW-Authenticate": "Bearer"}
+        )
     with Session(db.engine) as session:
         imageId = None
         if part.image is not None:
