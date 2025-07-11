@@ -1,0 +1,5 @@
+PyYAML
+fastapi[standard]
+pyjwt
+passlib[bcrypt]
+sqlmodel
