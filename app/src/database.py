@@ -29,7 +29,7 @@ class Locations(SQLModel, table=True):
     name: str
     description: str = ""
     image: Optional[uuid.UUID] = Field(default=None, foreign_key="images.id")
-    parent : Optional[int] = Field(default=None)
+    parent : Optional[uuid.UUID] = Field(default=None)
 
 
 class Parts(SQLModel, table=True):
