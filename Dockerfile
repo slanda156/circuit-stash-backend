@@ -1,7 +1,10 @@
 FROM python:3.13-slim
 
-COPY requirements.txt /requirements.txt
-RUN pip install --no-cache-dir -r /requirements.txt
+RUN pip install --no-cache-dir pip-tools
+
+COPY requirements.in /requirements.in
+RUN pip-compile requirements.in -o requirements.txt
+RUN pip-sync requirements.txt
 
 COPY app /app
 
