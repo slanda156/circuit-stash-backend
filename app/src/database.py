@@ -44,8 +44,8 @@ class Parts(SQLModel, table=True):
 
 class Inventory(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    partId: Optional[uuid.UUID] = Field(foreign_key="parts.id")
-    locationId: Optional[uuid.UUID] = Field(foreign_key="locations.id")
+    partId: uuid.UUID = Field(foreign_key="parts.id")
+    locationId: uuid.UUID = Field(foreign_key="locations.id")
     stock: int = 0
 
 
