@@ -1,3 +1,4 @@
+import uuid
 from logging import getLogger
 from typing import Annotated
 
@@ -32,19 +33,7 @@ def getParts(user: Annotated[User, Depends(getCurrentUser)]) -> dict:
 
 
 @router.get("/{partId}")
-def getPart(partId: int, user: Annotated[User, Depends(getCurrentUser)]) -> dict:
-    if type(partId) is not int:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="partId must be integer",
-            headers={"WWW-Authenticate": "Bearer"}
-        )
-    if partId <= 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="partId must be positive",
-            headers={"WWW-Authenticate": "Bearer"}
-        )
+def getPart(partId: uuid.UUID, user: Annotated[User, Depends(getCurrentUser)]) -> dict:
     with Session(db.engine) as session:
         stmt = select(db.Parts).where(db.Parts.id == partId)
         result = session.exec(stmt)
@@ -73,7 +62,7 @@ def addPart(part: Annotated[Part, Depends(validatePart)], user: Annotated[User, 
             detail="Part minStock is required and must be positive",
             headers={"WWW-Authenticate": "Bearer"}
         )
-    if part.name is None or part.name == "":
+    if part.name is None or part.name.strip() == "":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Part name is required",
