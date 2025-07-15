@@ -20,17 +20,16 @@ async def getImages() -> dict:
     with Session(db.engine) as session:
         stmt = select(db.Images)
         result = session.exec(stmt)
-    for image in result:
-        pathParts = Path(image.path).as_posix().split("/")
-        for part in pathParts:
-            pathParts.pop(0)
-            if part == "data":
-                break
-        path = "/".join(pathParts)
-        logger.debug(f"Image path: {path}")
-        images[image.id] = {
-            "path": path
-        }
+        for image in result:
+            pathParts = Path(image.path).as_posix().split("/")
+            for part in pathParts:
+                pathParts.pop(0)
+                if part == "data":
+                    break
+            path = "/".join(pathParts)
+            images[image.id] = {
+                "path": path
+            }
     return images
 
 
