@@ -14,7 +14,7 @@ logger = getLogger(__name__)
 router = APIRouter()
 
 
-@router.get("")
+@router.get("/")
 def getParts(user: Annotated[User, Depends(getCurrentUser)]) -> dict:
     parts = {}
     with Session(db.engine) as session:
