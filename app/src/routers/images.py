@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.get("/")
-def getImages() -> dict:
+async def getImages() -> dict:
     images = {}
     with Session(db.engine) as session:
         stmt = select(db.Images)
@@ -35,7 +35,7 @@ def getImages() -> dict:
 
 
 @router.post("/")
-def addImage(image: UploadFile = File(...)) -> dict:
+async def addImage(image: UploadFile = File(...)) -> dict:
     if not image:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -74,7 +74,7 @@ def addImage(image: UploadFile = File(...)) -> dict:
 
 
 @router.get("/{imageId}")
-def getImage(imageId: str) -> FileResponse:
+async def getImage(imageId: str) -> FileResponse:
     imageUUID = uuid.UUID(str(imageId), version=4)
     with Session(db.engine) as session:
         stmt = select(db.Images).where(db.Images.id == imageUUID)

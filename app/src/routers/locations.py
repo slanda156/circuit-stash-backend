@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.get("")
-def getLocations(user: Annotated[User, Depends(getCurrentUser)]) -> dict:
+async def getLocations(user: Annotated[User, Depends(getCurrentUser)]) -> dict:
     locations: dict[uuid.UUID, dict] = {}
     with Session(db.engine) as session:
         stmt = select(db.Locations)
@@ -40,7 +40,7 @@ def getLocations(user: Annotated[User, Depends(getCurrentUser)]) -> dict:
 
 
 @router.get("/{locationName}")
-def getLocationByName(user: Annotated[User, Depends(getCurrentUser)], locationName: str) -> dict:
+async def getLocationByName(user: Annotated[User, Depends(getCurrentUser)], locationName: str) -> dict:
     with Session(db.engine) as session:
         stmt = select(db.Locations).where(db.Locations.name == locationName)
         result = session.exec(stmt).first()
@@ -59,7 +59,7 @@ def getLocationByName(user: Annotated[User, Depends(getCurrentUser)], locationNa
 
 
 @router.post("/")
-def addLocation(location: Annotated[Location, Depends(validateLocation)],user: Annotated[User, Depends(getCurrentUser)]) -> None:
+async def addLocation(location: Annotated[Location, Depends(validateLocation)],user: Annotated[User, Depends(getCurrentUser)]) -> None:
     if location.name is None or location.name.strip() == "":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -127,7 +127,7 @@ def addLocation(location: Annotated[Location, Depends(validateLocation)],user: A
 
 
 @router.put("/")
-def updateLocation(location: Annotated[Location, Depends(validateLocation)], user: Annotated[User, Depends(getCurrentUser)]) -> None:
+async def updateLocation(location: Annotated[Location, Depends(validateLocation)], user: Annotated[User, Depends(getCurrentUser)]) -> None:
     with Session(db.engine) as session:
         stmt = select(db.Locations).where(db.Locations.id == location.id)
         result = session.exec(stmt)

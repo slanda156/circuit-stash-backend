@@ -17,17 +17,17 @@ router = APIRouter()
 
 
 @router.get("/users")
-def getusers(user: Annotated[User, Depends(isAdmin)]) -> dict:
+async def getusers(user: Annotated[User, Depends(isAdmin)]) -> dict:
     return {}
 
 
 @router.get("/users/user")
-def getUserByName(user: Annotated[User, Depends(isAdmin)], username: str) -> dict:
+async def getUserByName(user: Annotated[User, Depends(isAdmin)], username: str) -> dict:
     return {}
 
 
 @router.post("/user/user")
-def addUser(user: Annotated[User, Depends(isAdmin)], username: str, password: str, type: int) -> None:
+async def addUser(user: Annotated[User, Depends(isAdmin)], username: str, password: str, type: int) -> None:
     if db.getUser(username) is not None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -49,32 +49,32 @@ def addUser(user: Annotated[User, Depends(isAdmin)], username: str, password: st
 
 
 @router.put("/users/user")
-def changeUser(user: Annotated[User, Depends(isAdmin)], changedUser: User) -> None:
+async def changeUser(user: Annotated[User, Depends(isAdmin)], changedUser: User) -> None:
     pass
 
 
 @router.delete("/users/user")
-def deleteUser(user: Annotated[User, Depends(isAdmin)], username: str) -> None:
+async def deleteUser(user: Annotated[User, Depends(isAdmin)], username: str) -> None:
     pass
 
 
 @router.get("/configs")
-def getConfigs(user: Annotated[User, Depends(isAdmin)]) -> dict:
+async def getConfigs(user: Annotated[User, Depends(isAdmin)]) -> dict:
     return {}
 
 
 @router.get("/configs/{name}")
-def getConfig(user: Annotated[User, Depends(isAdmin)], name: str) -> dict:
+async def getConfig(user: Annotated[User, Depends(isAdmin)], name: str) -> dict:
     return {}
 
 
 @router.post("/configs")
-def addConfig(user: Annotated[User, Depends(isAdmin)], name: str, value: str) -> None:
+async def addConfig(user: Annotated[User, Depends(isAdmin)], name: str, value: str) -> None:
     pass
 
 
 @router.post("/images")
-def reloadImages(user: Annotated[User, Depends(isAdmin)]) -> None:
+async def reloadImages(user: Annotated[User, Depends(isAdmin)]) -> None:
     logger.warning("Reloading images")
     with Session(db.engine) as session:
         stmt = select(db.Images)
@@ -95,7 +95,7 @@ def reloadImages(user: Annotated[User, Depends(isAdmin)]) -> None:
 
 
 @router.post("/datasheets")
-def reloadDatasheets(user: Annotated[User, Depends(isAdmin)]) -> None:
+async def reloadDatasheets(user: Annotated[User, Depends(isAdmin)]) -> None:
     logger.warning("Reloading datasheets")
     with Session(db.engine) as session:
         stmt = select(db.Datasheets)

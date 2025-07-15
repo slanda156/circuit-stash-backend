@@ -63,12 +63,12 @@ def createToken(user: User, expiration: timedelta | None = None) -> Token:
 
 
 @router.post("/login")
-def login(formData: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
+async def login(formData: Annotated[OAuth2PasswordRequestForm, Depends()]) -> Token:
     user = authenticateUser(formData.username, formData.password)
     token = createToken(user)
     return token
 
 
 @router.get("me", response_model=User)
-def getMe(currentUser: Annotated[User, Depends(getCurrentUser)]) -> User:
+async def getMe(currentUser: Annotated[User, Depends(getCurrentUser)]) -> User:
     return currentUser

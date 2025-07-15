@@ -15,7 +15,7 @@ router = APIRouter()
 
 
 @router.get("/")
-def getParts(user: Annotated[User, Depends(getCurrentUser)]) -> dict:
+async def getParts(user: Annotated[User, Depends(getCurrentUser)]) -> dict:
     parts = {}
     with Session(db.engine) as session:
         stmt = select(db.Parts)
@@ -33,7 +33,7 @@ def getParts(user: Annotated[User, Depends(getCurrentUser)]) -> dict:
 
 
 @router.get("/{partId}")
-def getPart(partId: uuid.UUID, user: Annotated[User, Depends(getCurrentUser)]) -> dict:
+async def getPart(partId: uuid.UUID, user: Annotated[User, Depends(getCurrentUser)]) -> dict:
     with Session(db.engine) as session:
         stmt = select(db.Parts).where(db.Parts.id == partId)
         result = session.exec(stmt)
@@ -55,7 +55,7 @@ def getPart(partId: uuid.UUID, user: Annotated[User, Depends(getCurrentUser)]) -
 
 
 @router.post("/")
-def addPart(part: Annotated[Part, Depends(validatePart)], user: Annotated[User, Depends(getCurrentUser)]) -> None:
+async def addPart(part: Annotated[Part, Depends(validatePart)], user: Annotated[User, Depends(getCurrentUser)]) -> None:
     if part.minStock is None or part.minStock < 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -129,7 +129,7 @@ def addPart(part: Annotated[Part, Depends(validatePart)], user: Annotated[User, 
         session.commit()
 
 @router.put("/")
-def updatePart(part: Annotated[Part, Depends(validatePart)], user: Annotated[User, Depends(getCurrentUser)]) -> None:
+async def updatePart(part: Annotated[Part, Depends(validatePart)], user: Annotated[User, Depends(getCurrentUser)]) -> None:
     with Session(db.engine) as session:
         stmt = select(db.Parts).where(db.Parts.id == part.id)
         result = session.exec(stmt)

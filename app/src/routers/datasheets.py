@@ -14,7 +14,7 @@ logger = getLogger(__name__)
 router = APIRouter()
 
 @router.get("/")
-def getDatasheets() -> dict:
+async def getDatasheets() -> dict:
     datasheets = {}
     with Session(db.engine) as session:
         stmt = select(db.Datasheets)
@@ -34,7 +34,7 @@ def getDatasheets() -> dict:
 
 
 @router.post("/")
-def addDatasheet(datasheet: UploadFile = File(...)) -> dict:
+async def addDatasheet(datasheet: UploadFile = File(...)) -> dict:
     if not datasheet:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -73,7 +73,7 @@ def addDatasheet(datasheet: UploadFile = File(...)) -> dict:
 
 
 @router.get("/{datasheetId}")
-def getDatasheet(datasheetId: str) -> FileResponse:
+async def getDatasheet(datasheetId: str) -> FileResponse:
     datasheetUUID = uuid.UUID(str(datasheetId), version=4)
     with Session(db.engine) as session:
         stmt = select(db.Datasheets).where(db.Datasheets.id == datasheetUUID)
