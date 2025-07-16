@@ -1,11 +1,12 @@
 import uuid
-import shutil
+import io
 from logging import getLogger
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, status, UploadFile, File
 from fastapi.responses import FileResponse
 from sqlmodel import Session, select
+from PIL import Image
 
 import src.database as db
 
@@ -62,8 +63,10 @@ async def addImage(image: UploadFile = File(...)) -> dict:
             detail="Image file already exists",
             headers={"WWW-Authenticate": "Bearer"}
         )
-    with open(path, "wb") as f:
-        shutil.copyfileobj(image.file, f)
+    imageStream = io.BytesIO(await image.read())
+    img = Image.open(imageStream)
+    img = img.resize((50, 50))
+    img.save(path)
     with Session(db.engine) as session:
         dbImage = db.Images(path=str(path))
         session.add(dbImage)
