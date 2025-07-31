@@ -18,12 +18,20 @@ router = APIRouter()
 
 @router.get("/users")
 async def getusers(user: Annotated[User, Depends(isAdmin)]) -> dict:
-    return {}
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="List of users is not implemented yet",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
 
 
 @router.get("/users/user")
 async def getUserByName(user: Annotated[User, Depends(isAdmin)], username: str) -> dict:
-    return {}
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="Getting user by name is not implemented yet",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
 
 
 @router.post("/user/user")
@@ -50,27 +58,47 @@ async def addUser(user: Annotated[User, Depends(isAdmin)], username: str, passwo
 
 @router.put("/users/user")
 async def changeUser(user: Annotated[User, Depends(isAdmin)], changedUser: User) -> None:
-    pass
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="Updating user is not implemented yet",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
 
 
 @router.delete("/users/user")
 async def deleteUser(user: Annotated[User, Depends(isAdmin)], username: str) -> None:
-    pass
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="Deleting user is not implemented yet",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
 
 
 @router.get("/configs")
 async def getConfigs(user: Annotated[User, Depends(isAdmin)]) -> dict:
-    return {}
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="List of configs is not implemented yet",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
 
 
 @router.get("/configs/{name}")
 async def getConfig(user: Annotated[User, Depends(isAdmin)], name: str) -> dict:
-    return {}
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="Getting config by name is not implemented yet",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
 
 
 @router.post("/configs")
 async def addConfig(user: Annotated[User, Depends(isAdmin)], name: str, value: str) -> None:
-    pass
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="Adding config is not implemented yet",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
 
 
 @router.post("/images")
