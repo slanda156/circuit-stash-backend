@@ -1,11 +1,11 @@
 import os
 import uuid
 from logging import getLogger
-from typing import Optional
+from typing import Optional, List
 from base64 import b64encode
 
 from fastapi import HTTPException, status
-from sqlmodel import SQLModel, Field, create_engine
+from sqlmodel import SQLModel, Field, create_engine, Relationship
 from sqlmodel import Session, select
 
 from src.dependencies import config, getPasswordHash
@@ -17,7 +17,7 @@ logger = getLogger(__name__)
 
 class Users(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    username: str
+    username: str = Field(unique=True)
     password: str
     salt: str
     disabled: bool
@@ -26,26 +26,48 @@ class Users(SQLModel, table=True):
 
 class Locations(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    name: str
+    name: str = Field(unique=True)
     description: str = ""
     image: Optional[uuid.UUID] = Field(default=None, foreign_key="images.id")
-    parent : Optional[uuid.UUID] = Field(default=None)
+    parent : Optional[uuid.UUID] = Field(default=None, foreign_key="locations.id")
+
+
+class Categories(SQLModel, table=True):
+    id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    name: str = Field(unique=True)
+    tags: List["Tags"] = Relationship(back_populates="category")
+
+
+class PartTagLinks(SQLModel, table=True):
+    partId: uuid.UUID = Field(foreign_key="parts.id", primary_key=True)
+    tagId: uuid.UUID = Field(foreign_key="tags.id", primary_key=True)
+
+
+class Tags(SQLModel, table=True):
+    id: Optional[uuid.UUID] = Field(default_factory=uuid.uuid4, primary_key=True)
+    name: str = Field(unique=True)
+    categoryId: Optional[uuid.UUID] = Field(default=None, foreign_key="categories.id")
+    category: Optional[Categories] = Relationship(back_populates="tags")
+    parts: List["Parts"] = Relationship(back_populates="tags", link_model=PartTagLinks)
 
 
 class Parts(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    name: str
+    name: str = Field(unique=True)
     description: str = ""
     stock: int = 0
     minStock: int = 0
     image: Optional[uuid.UUID] = Field(default=None, foreign_key="images.id")
     datasheet: Optional[uuid.UUID] = Field(default=None, foreign_key="datasheets.id")
+    tags: List["Tags"] = Relationship(back_populates="parts", link_model=PartTagLinks)
 
 
 class Inventory(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     partId: uuid.UUID = Field(foreign_key="parts.id")
+    part: Parts = Relationship()
     locationId: uuid.UUID = Field(foreign_key="locations.id")
+    location: Locations = Relationship()
     stock: int = 0
 
 
@@ -83,6 +105,11 @@ def getUser(username: str) -> tuple[User, str] | None:
         )
         return simpleUser, user.salt
 
+
+# Solve forward references
+Categories.model_rebuild()
+Tags.model_rebuild()
+Parts.model_rebuild()
 
 engine = None
 match config.dbType:

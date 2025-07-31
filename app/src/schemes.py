@@ -40,6 +40,7 @@ class Part(BaseModel):
     minStock: int | None = None
     image: uuid.UUID | None = None
     datasheet: uuid.UUID | None = None
+    tags: list[str] = []
 
 
 class Location(BaseModel):
