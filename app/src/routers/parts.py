@@ -27,7 +27,8 @@ async def getParts(user: Annotated[User, Depends(getCurrentUser)]) -> dict:
                 "stock": part.stock,
                 "minStock": part.minStock,
                 "image": part.image,
-                "datasheet": part.datasheet
+                "datasheet": part.datasheet,
+                "tags": [tag.name for tag in part.tags],
             }
     return parts
 
@@ -50,7 +51,8 @@ async def getPart(partId: uuid.UUID, user: Annotated[User, Depends(getCurrentUse
         "stock": part.stock,
         "minStock": part.minStock,
         "image": part.image,
-        "datasheet": part.datasheet
+        "datasheet": part.datasheet,
+        "tags": [tag.name for tag in part.tags],
     }
 
 
@@ -97,6 +99,20 @@ async def addPart(part: Annotated[Part, Depends(validatePart)], user: Annotated[
                 datasheetId = existingDatasheet.id
         if part.description is None:
             part.description = ""
+        if part.tags is None:
+            part.tags = []
+        tags = []
+        for tag in part.tags:
+            stmt = select(db.Tags).where(db.Tags.name == tag)
+            result = session.exec(stmt)
+            existingTag = result.first()
+            if existingTag is not None:
+                tags.append(existingTag)
+            else:
+                newTag = db.Tags(name=tag)
+                session.add(newTag)
+                session.commit()
+                tags.append(newTag)
         if part.id is not None:
             stmt = select(db.Parts).where(db.Parts.id == part.id)
             result = session.exec(stmt)
@@ -125,11 +141,18 @@ async def addPart(part: Annotated[Part, Depends(validatePart)], user: Annotated[
                 image=imageId,
                 datasheet=datasheetId
             )
+        for tag in tags:
+            newPart.tags.append(tag)
         session.add(newPart)
         session.commit()
 
 @router.put("/")
 async def updatePart(part: Annotated[Part, Depends(validatePart)], user: Annotated[User, Depends(getCurrentUser)]) -> None:
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="Updating parts is not implemented yet",
+        headers={"WWW-Authenticate": "Bearer"}
+    )
     with Session(db.engine) as session:
         stmt = select(db.Parts).where(db.Parts.id == part.id)
         result = session.exec(stmt)
